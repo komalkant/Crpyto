@@ -1,16 +1,16 @@
 <?php
-class Cryptor
-{
 
+include("Encrypt.php");
+
+class Cryptor implements Encrypt
+{
   static protected $method = 'AES-128-CTR';
   static private $key;
-
   static protected function iv_bytes()
   {
-  	
+    
     return openssl_cipher_iv_length(Cryptor::$method);
   }
-
   public function __construct($key = false, $method = false)
   {
     if(!$key) {
@@ -31,15 +31,12 @@ class Cryptor
       }
     }
   }
-
   public static function encrypt($data)
   {
     $iv = openssl_random_pseudo_bytes(self::iv_bytes());
     $encrypted_string = bin2hex($iv) . openssl_encrypt($data, Cryptor::$method, Cryptor::$key, 0, $iv);
     return $encrypted_string;
   }
-
-
   public static function decrypt($data)
   {
     $iv_strlen = 2  * self::iv_bytes();
@@ -51,14 +48,11 @@ class Cryptor
       return false;
     }
   }
-
 }
-
   $token = "komalkant Gupta";
   $crypted_token = Cryptor::encrypt($token);
   echo 'Encrypted -> ';
   print_r($crypted_token); echo "</br>";
-
   $decrypted_token = Cryptor::decrypt($crypted_token);
   echo 'Decrypted -> ';
   print_r($decrypted_token); echo "</br>";
